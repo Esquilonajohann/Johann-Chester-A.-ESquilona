@@ -1,0 +1,138 @@
+import java.awt.EventQueue;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.awt.Color;
+import java.awt.Font;
+
+public class MilkTeaPOS {
+
+    private JFrame frame;
+    private JButton btnOrder;
+
+    private JCheckBox chckbxOkinawa;
+    private JCheckBox chckbxNewCheckBox_1;
+    private JCheckBox chckbxmatcha;
+
+    private JTextArea summaryOforder;
+    private String payment = "None";
+    private String cashier = "Cashier 1";
+
+    private JCheckBox chckbxmeowmeow;
+    private JCheckBox chckbxshawarmameow;
+    private JCheckBox chckbxburgermeowmeow;
+
+    private JComboBox<String> cBoxModeoPayment;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                MilkTeaPOS window = new MilkTeaPOS();
+                window.frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public MilkTeaPOS() {
+        initialize();
+        creaEvent();
+    }
+
+    private void initialize() {
+        frame = new JFrame();
+        frame.setBounds(100, 100, 575, 457);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(null);
+
+        JLabel lblNewLabel = new JLabel("Meow shop");
+        lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        lblNewLabel.setForeground(Color.BLUE);
+        lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel.setBounds(181, 8, 229, 25);
+        frame.getContentPane().add(lblNewLabel);
+
+        JPanel panel = new JPanel();
+        panel.setBorder(new BevelBorder(BevelBorder.RAISED));
+        panel.setBounds(10, 80, 250, 82);
+        panel.setLayout(null);
+        frame.getContentPane().add(panel);
+
+        JLabel lblNewLabel_1 = new JLabel("Product");
+        lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNewLabel_1.setBounds(75, 2, 85, 23);
+        panel.add(lblNewLabel_1);
+
+        chckbxOkinawa = new JCheckBox("Okinawa");
+        chckbxOkinawa.setBounds(6, 26, 77, 23);
+        panel.add(chckbxOkinawa);
+
+        chckbxNewCheckBox_1 = new JCheckBox("IceCoffe");
+        chckbxNewCheckBox_1.setBounds(85, 26, 75, 23);
+        panel.add(chckbxNewCheckBox_1);
+
+        chckbxmatcha = new JCheckBox("Matcha");
+        chckbxmatcha.setBounds(169, 26, 63, 23);
+        panel.add(chckbxmatcha);
+
+        JPanel panel_1 = new JPanel();
+        panel_1.setBorder(new BevelBorder(BevelBorder.RAISED));
+        panel_1.setBounds(9, 226, 264, 150);
+        panel_1.setLayout(null);
+        frame.getContentPane().add(panel_1);
+
+        summaryOforder = new JTextArea("Order summary here");
+        summaryOforder.setEditable(false);
+        summaryOforder.setBounds(10, 0, 255, 140);
+        panel_1.add(summaryOforder);
+
+        btnOrder = new JButton("Confirm Order");
+        btnOrder.setBounds(9, 175, 140, 36);
+        frame.getContentPane().add(btnOrder);
+
+        JPanel panel_2 = new JPanel();
+        panel_2.setBorder(new BevelBorder(BevelBorder.RAISED));
+        panel_2.setBounds(281, 80, 250, 82);
+        panel_2.setLayout(null);
+        frame.getContentPane().add(panel_2);
+
+        chckbxmeowmeow = new JCheckBox("Siopaw");
+        chckbxmeowmeow.setBounds(6, 26, 66, 23);
+        panel_2.add(chckbxmeowmeow);
+
+        chckbxshawarmameow = new JCheckBox("Shawarma");
+        chckbxshawarmameow.setBounds(78, 26, 82, 23);
+        panel_2.add(chckbxshawarmameow);
+
+        chckbxburgermeowmeow = new JCheckBox("Burger");
+        chckbxburgermeowmeow.setBounds(162, 26, 63, 23);
+        panel_2.add(chckbxburgermeowmeow);
+
+        cBoxModeoPayment = new JComboBox<>(new String[]{"Gcash", "PayMaya", "Credit Card"});
+        cBoxModeoPayment.setBounds(297, 226, 221, 22);
+        frame.getContentPane().add(cBoxModeoPayment);
+    }
+
+    private void creaEvent() {
+        btnOrder.addActionListener(e -> {
+            int total = 0;
+            StringBuilder items = new StringBuilder("Items:\n");
+
+            if (chckbxOkinawa.isSelected()) { total += 40; items.append("Okinawa: 40\n"); }
+            if (chckbxmatcha.isSelected()) { total += 60; items.append("Matcha: 60\n"); }
+            if (chckbxNewCheckBox_1.isSelected()) { total += 80; items.append("IceCoffee: 80\n"); }
+            if (chckbxmeowmeow.isSelected()) { total += 50; items.append("Siopaw: 50\n"); }
+            if (chckbxshawarmameow.isSelected()) { total += 100; items.append("Shawarma: 100\n"); }
+            if (chckbxburgermeowmeow.isSelected()) { total += 120; items.append("Burger: 120\n"); }
+
+            payment = cBoxModeoPayment.getSelectedItem().toString();
+
+            summaryOforder.setText(
+                items +
+                "\nPayment: " + payment +
+                "\nCashier: " + cashier +
+                "\nTotal: " + total
+            );
+        });
+    }
+}
