@@ -1,0 +1,202 @@
+package crud;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.event.*;
+import java.util.ArrayList;
+
+public class Jframe_johann extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+
+    private ArrayList<Appointment> appointments = new ArrayList<>();
+    private JTable table;
+    private DefaultTableModel tableModel;
+
+    private JTextField txtId, txtName, txtDate, txtTime;
+    private JComboBox<String> comboBox;
+
+    //  payment 
+    private JCheckBox chk1000;
+    private JCheckBox chk1300;
+
+    public Jframe_johann() {
+        setTitle("Appointment passport");
+        setSize(650, 450);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        getContentPane().setLayout(null);
+
+        JLabel lblId = new JLabel("ID:");
+        lblId.setBounds(20, 20, 100, 25);
+        getContentPane().add(lblId);
+
+        JLabel lblName = new JLabel("Name:");
+        lblName.setBounds(20, 50, 100, 25);
+        getContentPane().add(lblName);
+
+        JLabel lblDate = new JLabel("Date:");
+        lblDate.setBounds(20, 80, 100, 25);
+        getContentPane().add(lblDate);
+
+        JLabel lblTime = new JLabel("Time:");
+        lblTime.setBounds(20, 110, 100, 25);
+        getContentPane().add(lblTime);
+
+        txtId = new JTextField();
+        txtId.setBounds(120, 20, 150, 25);
+        getContentPane().add(txtId);
+
+        txtName = new JTextField();
+        txtName.setBounds(120, 50, 150, 25);
+        getContentPane().add(txtName);
+
+        txtDate = new JTextField();
+        txtDate.setBounds(120, 80, 150, 25);
+        getContentPane().add(txtDate);
+
+        txtTime = new JTextField();
+        txtTime.setBounds(120, 110, 150, 25);
+        getContentPane().add(txtTime);
+
+        JButton btnAdd = new JButton("Add");
+        btnAdd.setBounds(300, 20, 100, 25);
+        getContentPane().add(btnAdd);
+
+        JButton btnUpdate = new JButton("Update");
+        btnUpdate.setBounds(300, 50, 100, 25);
+        getContentPane().add(btnUpdate);
+
+        JButton btnDelete = new JButton("Delete");
+        btnDelete.setBounds(300, 80, 100, 25);
+        getContentPane().add(btnDelete);
+
+        tableModel = new DefaultTableModel(
+                new Object[]{"ID", "Name", "Date", "Time passport", "Location", "Total Payment"}, 0);
+        table = new JTable(tableModel);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(20, 150, 600, 250);
+        getContentPane().add(scrollPane);
+
+        comboBox = new JComboBox<>(new String[]{"Nova SM", "Cubao SM", "Mandaluyong SM"});
+        comboBox.setBounds(509, 21, 111, 22);
+        getContentPane().add(comboBox);
+
+        JLabel lblLocation = new JLabel("Location:");
+        lblLocation.setBounds(410, 20, 100, 25);
+        getContentPane().add(lblLocation);
+
+        JLabel lblPayment = new JLabel("Payment:");
+        lblPayment.setBounds(410, 65, 100, 25);
+        getContentPane().add(lblPayment);
+
+        chk1000 = new JCheckBox("1000");
+        chk1000.setBounds(523, 51, 97, 23);
+        getContentPane().add(chk1000);
+
+        chk1300 = new JCheckBox("1300");
+        chk1300.setBounds(523, 81, 97, 23);
+        getContentPane().add(chk1300);
+
+        // ✅ only one payment allowed
+        chk1000.addActionListener(e -> chk1300.setSelected(false));
+        chk1300.addActionListener(e -> chk1000.setSelected(false));
+
+        btnAdd.addActionListener(e -> addAppointment());
+        btnUpdate.addActionListener(e -> updateAppointment());
+        btnDelete.addActionListener(e -> deleteAppointment());
+
+        table.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    txtId.setText(tableModel.getValueAt(row, 0).toString());
+                    txtName.setText(tableModel.getValueAt(row, 1).toString());
+                    txtDate.setText(tableModel.getValueAt(row, 2).toString());
+                    txtTime.setText(tableModel.getValueAt(row, 3).toString());
+                    comboBox.setSelectedItem(tableModel.getValueAt(row, 4).toString());
+
+                    int pay = Integer.parseInt(tableModel.getValueAt(row, 5).toString());
+                    chk1000.setSelected(pay == 1000);
+                    chk1300.setSelected(pay == 1300);
+                }
+            }
+        });
+    }
+
+    private void addAppointment() {
+        try {
+            int id = Integer.parseInt(txtId.getText().trim());
+            String name = txtName.getText().trim();
+            String date = txtDate.getText().trim();
+            String time = txtTime.getText().trim();
+            String location = comboBox.getSelectedItem().toString();
+
+            int payment;
+            if (chk1000.isSelected()) payment = 1000;
+            else if (chk1300.isSelected()) payment = 1300;
+            else {
+                JOptionPane.showMessageDialog(this, "Please select payment (1000 or 1300)");
+                return;
+            }
+
+            for (Appointment a : appointments) {
+                if (a.getId() == id) {
+                    JOptionPane.showMessageDialog(this, "Paulit-ulit sapakan nlng!");
+                    return;
+                }
+            }
+
+            appointments.add(new Appointment(id, name, date, time, location));
+
+            tableModel.addRow(new Object[]{
+                    id, name, date, time, location, payment
+            });
+
+            clearFields();
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID must be a number!");
+        }
+    }
+
+    private void updateAppointment() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            int payment = chk1000.isSelected() ? 1000 : 1300;
+
+            tableModel.setValueAt(txtId.getText(), row, 0);
+            tableModel.setValueAt(txtName.getText(), row, 1);
+            tableModel.setValueAt(txtDate.getText(), row, 2);
+            tableModel.setValueAt(txtTime.getText(), row, 3);
+            tableModel.setValueAt(comboBox.getSelectedItem(), row, 4);
+            tableModel.setValueAt(payment, row, 5);
+
+            clearFields();
+        }
+    }
+
+    private void deleteAppointment() {
+        int row = table.getSelectedRow();
+        if (row >= 0) {
+            appointments.remove(row);
+            tableModel.removeRow(row);
+            clearFields();
+        }
+    }
+
+    private void clearFields() {
+        txtId.setText("");
+        txtName.setText("");
+        txtDate.setText("");
+        txtTime.setText("");
+        chk1000.setSelected(false);
+        chk1300.setSelected(false);
+        table.clearSelection();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Jframe_johann().setVisible(true));
+    }
+}
