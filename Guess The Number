@@ -1,0 +1,137 @@
+package MyjavaProjectEsquilona;
+
+import java.awt.EventQueue;
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.util.Random;
+
+public class GuessTheNumberApp extends JFrame {
+
+    private JTextField txtGuess;
+    private JLabel lblMessage;
+    private JLabel lblTries;
+
+    private int secretNumber;
+    private int tries;
+
+    /**
+     * Launch the application.
+     */
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    GuessTheNumberApp window = new GuessTheNumberApp();
+                    window.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * Create the application window.
+     */
+    public GuessTheNumberApp() {
+        setTitle("Guess the Number Game");
+        setBounds(100, 100, 450, 300);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(null);
+        setLocationRelativeTo(null);
+
+        startNewGame();
+        initializeComponents();
+    }
+
+    private void initializeComponents() {
+
+        JLabel lblTitle = new JLabel("Guess the Number (1 - 10)");
+        lblTitle.setBounds(120, 20, 250, 25);
+        add(lblTitle);
+
+        JLabel lblGuess = new JLabel("Enter your guess:");
+        lblGuess.setBounds(50, 70, 150, 25);
+        add(lblGuess);
+
+        txtGuess = new JTextField();
+        txtGuess.setBounds(200, 70, 150, 25);
+        add(txtGuess);
+
+        JButton btnGuess = new JButton("Guess");
+        btnGuess.setBounds(50, 120, 100, 30);
+        add(btnGuess);
+
+        JButton btnClear = new JButton("Clear");
+        btnClear.setBounds(170, 120, 100, 30);
+        add(btnClear);
+
+        JButton btnReset = new JButton("Reset Game");
+        btnReset.setBounds(290, 120, 120, 30);
+        add(btnReset);
+
+        lblMessage = new JLabel("Make a guess!");
+        lblMessage.setBounds(50, 170, 350, 25);
+        add(lblMessage);
+
+        lblTries = new JLabel("Tries: 0");
+        lblTries.setBounds(50, 200, 200, 25);
+        add(lblTries);
+
+        // Guess Button
+        btnGuess.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                checkGuess();
+            }
+        });
+
+        // Clear Button
+        btnClear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                txtGuess.setText("");
+            }
+        });
+
+        // Reset Button
+        btnReset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                startNewGame();
+                txtGuess.setText("");
+                lblMessage.setText("New game started!");
+                lblTries.setText("Tries: 0");
+            }
+        });
+    }
+
+    private void startNewGame() {
+        Random random = new Random();
+        secretNumber = random.nextInt(10) + 1; // 1 to 10
+        tries = 0;
+    }
+
+    private void checkGuess() {
+        try {
+            int guess = Integer.parseInt(txtGuess.getText());
+            tries++;
+            lblTries.setText("Tries: " + tries);
+
+            if (guess < secretNumber) {
+                lblMessage.setText("Too LOW ❌");
+            } else if (guess > secretNumber) {
+                lblMessage.setText("Too HIGH ❌");
+            } else {
+                lblMessage.setText("🎉 Correct! You guessed it!");
+                JOptionPane.showMessageDialog(this,
+                        "You guessed the number in " + tries + " tries!",
+                        "Winner",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter a valid number!",
+                    "Input Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
